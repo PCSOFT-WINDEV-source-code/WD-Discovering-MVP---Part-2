@@ -1,0 +1,195 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : POrderForm
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd01ff0504a2b6
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      POrderForm is Class
+      
+      PROTECTED
+      	m_clCurrentOrder is MOrder <associated>	// model associated with this presenter (always in phase with the interface)
+      	m_pclSourceOrder is MOrder dynamic	// source model (before modification) associated with this presenter
+      	
+      	m_pValidation is Procedure	// Procedure to run when validating a record
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352846169547446
+     type_code : 27
+     code : |1-
+      Procedure Constructor(pclOrder is MOrder dynamic, pValidation is Procedure = Null)
+      
+      // Constructor of model
+      Constructor m_clCurrentOrder(pclOrder)
+      // Stores the initial order
+      m_pclSourceOrder <- pclOrder
+      // Stores the validation procedure
+      m_pValidation = pValidation
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352846169612982
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : ValidateModification
+     internal_properties : CAAAAAgAAACrjbLJ0QY+Bs/c72oETyApwx1c7MiN8/tf0lNguKUPHyHMDjiDIDG9+DOTJCgGjV5XegoAIHSaXKZlUIU4uEYclWmcw92UMHDM1grkLvrA0nPBoLvSE77f6LD1jO+JP+w9LQ+ZOtOy8uT2F0w=
+     procedure_id : 1494352846169678518
+     type_code : 12
+     code : |1+
+      // Summary: Validates the modifications of the order form
+      // Syntax:
+      //[ <Result> = ] ValidateModification ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	boolean: True if the modification is effective, False otherwise
+      //
+      Procedure ValidateModification() : boolean
+      
+      clError is CManageError
+      clStorage is MOrder(m_pclSourceOrder)
+      
+      // Defines the source order
+      m_pclSourceOrder.Copy(m_clCurrentOrder)
+      
+      // Saves the order
+      IF NOT m_pclSourceOrder.bSave(clError) THEN
+      	ErrorThrow(1, clError.FormatMessage())
+      	// Repositions the source
+      	m_pclSourceOrder.copy(clStorage)
+      	RESULT False
+      END
+      
+      // Runs the validation procedure if it is defined
+      IF m_pValidation <> Null THEN m_pValidation(m_pclSourceOrder)
+      
+      RESULT True
+      
+     type : 458752
+   -
+     name : NewLine
+     internal_properties : CAAAAAgAAABs1D49F3ehRNV7fAeSGSlbwllCLT+7x8h3Mbg8SvXx2Cc0bgdYpf0+Q4pcJ0J2lcgNrpr+xpQ74YemmaO1VaFnoLOQxba0V7N7Kq7y3oCHPpIQSWUJ71uwxx20Uw7mraycT4MnT1bi+XuCwOEjzzwJXhhp3lPOrWatNjA4ZPX16WbwlWWLBlOaAqMgyqwbyqXNsjPmlHQnteX42D6ed3TAslpJkz4QvQIEu/fDjke2BSr3Cj98jIkgXbefa78Y
+     procedure_id : 1494352846169744054
+     type_code : 12
+     code : |1+
+      // Summary: Asks to add a new line
+      // Syntaxe :
+      //[ <Résultat> = ] NewLine ()
+      //
+      // Paramètres :
+      //	Aucun
+      
+      // Return value:
+      Procedure NewLine()
+      
+      // Loads the array of available products
+      clTabProduct is MArrayOfProducts
+      clTabProduct.Load()
+      
+      // Defines the presenter for the table of products
+      // The NotifIfAdd procedure will be called if a product is selected
+      clPresenter is PFindProduct(clTabProduct, NotifIfAdd)
+      
+      // Returns the presenter
+      RESULT clPresenter
+     type : 458752
+   -
+     name : NotifIfAdd
+     procedure_id : 1494352846169809590
+     type_code : 12
+     code : |1+
+      // Summary: Procedure called when a product is selected for a new order line
+      // Syntax:
+      //NotifIfAdd (<pclProduct> is MProduct dynamic)
+      //
+      // Parameters:
+      //	pclProduct (MProduct dynamic): Product referenced in the new order line
+      
+      // Return value:
+      Procedure NotifIfAdd(pclProduct is MProduct dynamic)
+      
+      // Adds an order line with the requested product
+      m_clArrayOrderLine.NewLine(pclProduct)
+      
+      // Recalculates the total of the order
+      CalculateTotal()
+     type : 458752
+   -
+     name : ModifQuantity
+     procedure_id : 1494352846169875126
+     type_code : 12
+     code : |1+
+      // Summary: Procedure called when a modification of quantity is requested for an order line
+      // Syntax:
+      // ModifQuantity (<pclOrdLine> is MOrderLine dynamic, <nQuantity> is int)
+      //
+      // Parameters:
+      //	pclOrdLine (MOrderLine dynamic): Order line to modify
+      //	nQuantity (integer): New quantity
+      // Return value:
+      // 	None
+      //
+      Procedure ModifQuantity(pclOrdLine is MOrderLine dynamic, nQuantity is int)
+      
+      // Modifies the quantity for the order line
+      pclOrdLine.m_nQuantity = nQuantity
+      pclOrdLine.m_cyTotal = nQuantity * pclOrdLine.m_cyPrice
+      
+      // Recalculates the total of the order
+      CalculateTotal()
+     type : 458752
+  properties :
+   -
+     name : p_NbArticles
+     identifier : 0x14bd01ff0505a2b6
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         
+        type : 1966080
+     template_refs : []
+   -
+     name : NameInLetters
+     identifier : 0x14bd01ff0506a2b6
+     type_code : 103
+     p_codes :
+      -
+        code : |1+
+         Procedure PUBLIC NameInLetters()
+         
+         // Returns the name of the order in clear
+         RESULT StringBuild("Order #%1 of %2", m_clCurrentOrder.m_nInternalOrderNumber, m_clCurrentOrder.m_pclCustomer.NameInLetters)
+        type : 1966080
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : PFicheCommande
+resources :
+ string_res :
+  identifier : 0x143e2bc5011137b8
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

@@ -1,0 +1,100 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MOrderLine
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd020e0584da2a
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      MOrderLine is Class
+      	// The OrderLine model inherits from the base model
+      	inhérits of MBase
+      
+      	// An order line is linked to an order
+      	m_pclOrder	is MOrder dynamic	<weak>
+      
+      	// Supported items
+      	m_sReference 	is string		<mapping=Reference>
+      	m_sCaption		is string		<mapping=Caption>
+      	m_nQuantity		is int		<mapping=Quantity>
+      	m_cyPrice		is currency	<mapping=Price>
+      	m_cyTotal		is currency 	<mapping=Total>
+      
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352910602328618
+     type_code : 27
+     code : |1-
+      Procedure Constructor(pclOrder is MOrder dynamic)
+      
+      // Calls the constructor of the base model
+      Constructor MBase(OrderLine..Name, OrderLine.OrderLineID..Name)
+      
+      // Stores the order
+      m_pclOrder = pclOrder
+     type : 589824
+   -
+     name : Manufacturer
+     procedure_id : 1494352910602328618
+     type_code : 27
+     code : |1+
+      Procedure Constructor()
+      
+      // Calls the constructor of the base model
+      Constructor MBase(OrderLine..Name, OrderLine.OrderLineID..Name)
+     type : 589825
+   -
+     name : Destructor_
+     procedure_id : 1494352910602394154
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : MemoryToFile
+     internal_properties : CAAAAAgAAAATrJ/OnB8j9o/7P7FEuGrBVELwgG2vO69rRZWOsv/YPRmCsJioUwcKi05sJDNJqX4qcweAGw2dyjDB2hFoceUhKKj0oCGL4x6B3Cs/iImxIIl0RSiIpcEV7m8lOSQ513GN3YjYe0EQUbN4OXE8AM7WY4NS3uq+pshbpOaSXOqEPBWNO7G/FTbyG0y3KtnLFIXMC8goWgdC+TeKkpKVtmIsavvUbHSY8rfO1sXc7Nh+e8MAbo7M6bOXz47XYWKERTDHtzgDw5sSeRqVy0MNYbNkS/sZL5SB1z8eG7wYS6ngws6aicmiwAIT
+     procedure_id : 1494352910602459690
+     type_code : 12
+     code : |1-
+      // Summary: Automatically initializes the record items with the value of members
+      // Syntax:
+      // MemoryToFile ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	None
+      //
+      Procedure MemoryToFile()
+      
+      // Calls the MemoryToFile method of MBase
+      Ancestor.MemoryToFile()
+      
+      // Stores the order identifier
+      OrderLine.OrderID = m_pclOrder.m_vID
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : MLigneCommande
+resources :
+ string_res :
+  identifier : 0x143e37ff0308fb71
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

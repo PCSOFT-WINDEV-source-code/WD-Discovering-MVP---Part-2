@@ -1,0 +1,340 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MOrder
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd020d0573d73d
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      MOrder is Class
+      	// The Order model inherits from the base model
+      	inhérits of MBase
+      	
+      	// An order is linked to a customer
+      	m_pclCustomer					is MCustomer dynamic	<weak>
+      	
+      	// An order includes several order lines
+      	m_clArrayOrderLine	is MArrayOfOrderLines
+      	
+      	// Supported items
+      	m_nInternalOrderNumber	is 8-byte int			<mapping=InternalOrderNumber>
+      	m_dOrderDate				is date				<mapping=date>
+      	m_cyTotal					is currency			<mapping=Total>
+      	m_sRemarks 			is string 				<mapping=Remarks>
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352906306311997
+     type_code : 27
+     code : |1+
+      Procedure Constructor(pclCustomer is MCustomer dynamic)
+      
+      // Calls the constructor of the base model
+      Constructor MBase(Orders..Name, Orders.OrderID..Name)
+      // Calls the constructor of the array of order lines
+      Constructor m_clArrayOrderLine(object)
+      
+      // Stores the client
+      m_pclCustomer = pclCustomer
+     type : 589824
+   -
+     name : Manufacturer
+     procedure_id : 1494352906306311997
+     type_code : 27
+     code : |1+
+      Procedure Constructor(pclOrder is MOrder dynamic)
+      
+      // Calls the constructor of the base model
+      Constructor MBase(Orders..Name, Orders.OrderID..Name)
+      // Calls the constructor of the array of order lines
+      Constructor m_clArrayOrderLine(object)
+      
+      // Copies the order
+      CopyInitial(pclOrder)
+     type : 589825
+   -
+     name : Destructor_
+     procedure_id : 1494352906306377533
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : bSave
+     procedure_id : 1494352906306443069
+     type_code : 12
+     code : |1-
+      // Summary: Saves the record in database
+      // Syntax:
+      //[ <Result> = ] bSave (<clError> is CManageError)
+      //
+      // Parameters:
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the backup is effective, False otherwise
+      //
+      Procedure bSave(clError is CManageError) : boolean
+      
+      // Calls the bSave method of MBase
+      IF Ancestor.bSave(clError) = False THEN RESULT False
+      
+      // Saves the order lines
+      let bSaved = m_clArrayOrderLine.bSave(clError)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+      
+      RESULT bSaved
+     type : 458752
+   -
+     name : Load
+     procedure_id : 1494352906306508605
+     type_code : 12
+     code : |1-
+      // Summary: Loads the model information
+      // Syntax:
+      // Load ([<sdSource> is string])
+      //
+      // Parameters:
+      //	sdSource (ANSI string): Source to use, empty string ("") to use the file associated with the model
+      // Return value:
+      // 	None
+      //
+      Procedure Load(dsSource is string = "")
+      
+      // Calls the Load method of MBase
+      Ancestor.Load(dsSource)
+      
+      // Loads the information of the order lines
+      m_clArrayOrderLine.Load()
+     type : 458752
+   -
+     name : GenearteInternalOrderNumber
+     internal_properties : CAAAAAgAAADpy/w3LzyZxtHad/hMRxa/sWve/EbXNwsZkAtGmMXp+Utm2HhVcnWx0okfJkwy23yh3MgExnoB1VX8/7BNYx/D6mJjljarw5W/8VlHS11hcRBao7rfDjWkrwesZ6zcbJ/+Wl40U80IrKI01Y4=
+     procedure_id : 1494352906306574141
+     type_code : 12
+     code : |1-
+      // Summary: Generates an internal order number
+      // Syntax:
+      // [ <Result> = ] GenerateInternalOrderNumber ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	integer: Internal order number
+      //
+      Procedure PROTECTED GLOBAL GenearteInternalOrderNumber() : int
+      
+      nGeneratedNumber is int
+      
+      // Stores the current position in the file
+      nPos is int = HSavePosition(Orders, hSaveItems)
+      
+      // Finds the last internal order number
+      HReadLast(Orders, InternalOrderNumber)
+      IF HFound(Orders) THEN nGeneratedNumber = Val(Orders.InternalOrderNumber)
+      
+      // Increments this number
+      nGeneratedNumber++
+      
+      // Repositions the file
+      HRestorePosition(nPos)
+      
+      RESULT nGeneratedNumber
+     type : 458752
+   -
+     name : Copy
+     procedure_id : 1494352906306639677
+     type_code : 12
+     code : |1+
+      // Summary: Copies an order into the current order
+      // Syntax:
+      // Copy (<pclBase> is MBase dynamic)
+      //
+      // Parameters:
+      //	pclOrder (MOrder dynamic): Order to copy
+      // Return value:
+      // 	None
+      //
+      Procedure Copy(pclOrder is MOrder dynamic) <override>
+      
+      // Copies the object
+      Ancestor.Copy(pclOrder)
+      m_pclCustomer = pclOrder.m_pclCustomer
+      m_nInternalOrderNumber = pclOrder.m_nInternalOrderNumber
+      m_dOrderDate = pclOrder.m_dOrderDate
+      m_cyTotal = pclOrder.m_cyTotal
+      m_sRemarks = pclOrder.m_sRemarks
+      
+      // Copies the order lines
+      m_clArrayOrderLine.Copy(pclOrder.m_clArrayOrderLine)
+     type : 458752
+   -
+     name : bDeleteLine
+     procedure_id : 1494352906306705213
+     type_code : 12
+     code : |1-
+      // Summary: Deletes an order line
+      // Syntax:
+      //[ <Result> = ] bDeleteLine (<pclOrdLine> is MOrderLine dynamic, <clError> is CManageError)
+      //
+      // Parameters:
+      //	pclOrdLine (MOrderLine dynamic): Order line to delete
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the deletion is effective, False otherwise
+      //
+      Procedure bDeleteLine(pclOrdLine is MOrderLine dynamic, clError is CManageError) : boolean
+      
+      // Deletes the order line from the array of order lines
+      let bDeleted = m_clArrayOrderLine.bDelete(pclOrdLine, clError)
+      
+      // If the line deletion is effective, calculates the new total for the order
+      IF bDeleted THEN CalculateTotal()
+      
+      RESULT bDeleted
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1494352906306770749
+     type_code : 12
+     code : |1+
+      // Summary: Deletes the current record
+      // Syntax:
+      // [ <Result> = ] bDelete (<clError> is CManageError)
+      //
+      // Parameters:
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the deletion is effective, False otherwise
+      //
+      Procedure bDelete(clError is CManageError) : boolean
+      
+      // Deletes the order lines
+      IF NOT m_clArrayOrderLine.bDelete(clError) THEN RESULT False
+      
+      // Calls the bDelete method of MBase
+      RESULT Ancestor.bDelete(clError)
+      
+     type : 458752
+   -
+     name : MemoryToFile
+     internal_properties : CAAAAAgAAABvGNs/t1Ofynv3N1UgHL5BrGZ8hNFjT5tnuV3qzsM0BfEmtIQsP1tGZzLkcDdFdUYKz7sEl4EZxpRl8pVs1fkhwHTglFUHJ+JNQOMDpK0t0BHw6XTsGUWZmpMtNZhdg8lVqTwcRw3UJfdUgdVIVAoeg3e20hgoyL7pMmAQMiAmRuvbje9ll7BYkWJpeL+xTqeKQepmGGmsf7UIHEAbHJyO6HH+UhIavO38BPfqgp7Y1bl+4BxKYyV97WzZZxj6z5KF9SoBQQ2cvxAbvUmb7yU+YVHr3XIjoTUseR7+cZ/SNKz4S5pmBE7f
+     procedure_id : 1494352906306836285
+     type_code : 12
+     code : |1+
+      // Summary: Automatically initializes the record items with the value of members
+      // Syntax:
+      //MemoryToFile ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	None
+      //
+      Procedure VIRTUAL MemoryToFile()
+      
+      // Calls the method of MBase
+      Ancestor.MemoryToFile()
+      
+      // Positions the customer identifier
+      Orders.CustomerID = m_pclCustomer.m_vID
+      
+      // If it is a new element, generates an internal order number
+      IF m_bNew THEN
+      	m_nInternalOrderNumber = GenearteInternalOrderNumber()
+      	Orders.InternalOrderNumber = m_nInternalOrderNumber
+      END
+     type : 458752
+   -
+     name : CalculateTotal
+     procedure_id : 1494352906306901821
+     type_code : 12
+     code : |1-
+      // Summary: Calculates the total of the order
+      // Syntax:
+      //CalculateTotal ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	None
+      //
+      Procedure CalculateTotal()
+      
+      // Reset the total
+      m_cyTotal = 0
+      
+      // Browses the order lines
+      FOR ALL ELEMENT pclCommandLine of m_clArrayOrderLine.m_arrOrderLines
+      	m_cyTotal += pclCommandLine.m_cyTotal
+      END
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+   -
+     name : CopyInitial
+     procedure_id : 1494352906306967357
+     type_code : 12
+     code : |1+
+      // Summary: Copies an order into the current order
+      // Syntax:
+      // CopyInitial (<pclBase> is MBase dynamic)
+      //
+      // Parameters:
+      //	pclOrder (MOrder dynamic): Order to copy
+      // Return value:
+      // 	None
+      //
+      Procedure CopyInitial(pclOrder is MOrder dynamic)
+      
+      Copy(pclOrder)
+     type : 458752
+  properties :
+   -
+     name : NbItems
+     identifier : 0x14bd020d0574d73d
+     type_code : 103
+     p_codes :
+      -
+        code : |1+
+         Procedure PUBLIC NbItems() : int
+         
+         nNbArticles is int
+         
+         // Browses the order lines
+         FOR EACH clLine of m_clArrayOrderLine.m_arrOrderLines
+         	// Increments the number of products
+         	nNbArticles += clLine.m_nQuantity
+         END
+         
+         // Returns the number of products
+         RESULT nNbArticles
+        type : 1966080
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : MCommande
+resources :
+ string_res :
+  identifier : 0x143e209601ef889d
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

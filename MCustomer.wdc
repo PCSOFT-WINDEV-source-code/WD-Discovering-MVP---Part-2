@@ -1,0 +1,90 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MCustomer
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd020c0558d1a2
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAAB866eP4Ets4TTLMsshqEz3fUrTsqRNJyKDnG3Fh2I4G2j/gv1+ctrBQKEsIohDsPZ15m8aTDv/o82gJIt8op0fGoBvBA==
+  type_code : 10
+  p_codes :
+   -
+     code : |1-
+      MCustomer is Class
+      	// The Customer model inherits from the base model
+      	inhérits of MBase
+      
+      	// Supported items
+      	m_nTitle 		is int			<mapping=Title>
+      	m_sLastName		is string		<mapping=LastName>
+      	m_sFirstName	is string		<mapping=FirstName>
+      	m_sAddress		is string		<mapping=Address>
+      	m_sZipCode		is string		<mapping=ZipCode>
+      	m_sCity			is string		<mapping=City>
+      	m_sCountry		is string		<mapping=Country>
+      	m_sPhone		is string		<mapping=Phone>
+      	m_sEmail		is string		<mapping=Email>
+      	m_bufPhoto		is buffer		<mapping=Photo>
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352902009573794
+     type_code : 27
+     code : |1+
+      Procedure Constructor()
+      
+      // Calls the constructor of the base model
+      Constructor MBase(Customer..Name, Customer.CustomerID..Name)
+      
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352902009639330
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+     type : 655360
+  properties :
+   -
+     name : NameInLetters
+     identifier : 0x14bd020c0559d1a2
+     type_code : 103
+     p_codes :
+      -
+        code : |1+
+         Procedure PUBLIC NameInLetters()
+         
+         sTitle is string
+         
+         // Defines the civil status in clear
+         SWITCH m_nTitle
+         	CASE 1: sTitle = "Mr"
+         	CASE 2: sTitle = "Mrs"
+         	CASE 3: sTitle = "Ms"
+         	OTHER CASE : sTitle = ""
+         END
+         
+         // Returns the full name of the customer
+         RESULT sTitle +[" "]+ m_sLastName +[" "]+ m_sFirstname
+        type : 1966080
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : MClient
+resources :
+ string_res :
+  identifier : 0x14326cbe0016dfa2
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

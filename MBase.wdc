@@ -1,0 +1,268 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MBase
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x144782b201125814
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      // Base model class
+      MBase is Class
+      	
+      	m_bNew		is boolean	// True if it is a new element, False otherwise
+      	m_vID			is variant	// Identifier of the record
+      	
+      	m_sFileName	is string	// Name of the file associated with the model
+      	m_sNameUniqueKey	is string	// Name of the unique key item of the file
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1461280305138849827
+     type_code : 27
+     code : |1-
+      Procedure Constructor(sFileName is string, sNameAutoID is string)
+      
+      // It is a new element
+      m_bNew = True
+      
+      // Stores the file information
+      m_sFileName = sFileName
+      m_sNameUniqueKey = sNameAutoID
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1461280305138915363
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : Load
+     procedure_id : 1461280360973569278
+     type_code : 12
+     code : |1+
+      // Summary: Loads the model information
+      // Syntax:
+      // Load ([<sdSource> is string])
+      //
+      // Parameters:
+      //	sdSource (ANSI string): Source to use, empty string ("") to use the file associated with the model
+      // Return value:
+      // 	None
+      //
+      Procedure Load(dsSource is string = "")
+      
+      // It is not a new element
+      m_bNew = False
+      
+      // If the source is not filled
+      IF dsSource = "" THEN
+      	// Retrieves the identifier from the file associated with the model
+      	m_vID = {m_sFileName+"."+m_sNameUniqueKey, indItem}
+      ELSE
+      	// Retrieves the identifier from the source passed in parameter
+      	m_vID = {dsSource+"."+m_sNameUniqueKey, indItem}
+      END
+      
+      // Loads the record in memory
+      FileToMemory(dsSource)
+     type : 458752
+   -
+     name : bSave
+     procedure_id : 1461280403923317431
+     type_code : 12
+     code : |1-
+      // Summary: Saves the record in database
+      // Syntax:
+      // [<Result> = ] bSave (<clError> is CManageError)
+      //
+      // Parameters:
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the backup is effective, False otherwise
+      //
+      Procedure bSave(clError is CManageError) : boolean
+      
+      // If it's a new record
+      IF bNew() THEN
+      	
+      	// Reset to zero
+      	HReset(m_sFileName)
+      	// Initialize the items from members
+      	MemoryToFile()
+      	// Adds the record
+      	HAdd(m_sFileName)
+      	// If an error is detected, it must be stored
+      	IF ErrorOccurred() THEN
+      		clError.Initialize(CManageError::HFSQLError, HErrorInfo())
+      	ELSE
+      		// Stores the record identifier
+      		m_vID = {m_sFileName+"."+m_sNameUniqueKey, indItem}
+      		// The current element is not a new element
+      		m_bNew = False		
+      	END
+      	
+      ELSE
+      	
+      	// Finds the record
+      	HReadSeekFirst(m_sFileName, m_sNameUniqueKey, m_vID)
+      	IF HFound(m_sFileName) THEN
+      		// Initialize the items from members
+      		MemoryToFile()
+      		// Modifies the record
+      		HModify(m_sFileName)
+      		// If an error is detected, it must be stored
+      		IF ErrorOccurred() THEN clError.Initialize(CManageError::HFSQLError, HErrorInfo())
+      	ELSE
+      		// The records was not found
+      		clError.Initialize(CManageError::RecordNotFound)
+      	END
+      	
+      END
+      
+      // Asks to update the views
+      RequestRefreshUI()
+      
+      // Returns True if no error was detected
+      RESULT (clError.code = CManageError.None)
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1461280429693192680
+     type_code : 12
+     code : |1-
+      // Summary: Deletes the current record
+      // Syntax:
+      // [ <Result> = ] bDelete (<clError> is CManageError)
+      //
+      // Parameters:
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the deletion is effective, False otherwise
+      //
+      Procedure bDelete(clError is CManageError) : boolean
+      
+      // If it is a new element, no need to perform the deletion
+      IF bNew() THEN RESULT True
+      
+      // Finds the record
+      HReadSeekFirst(m_sFileName, m_sNameUniqueKey, m_vID)
+      IF HFound(m_sFileName) THEN
+      	// Deletes the record
+      	HDelete(m_sFileName)
+      	// If an error is detected, it must be stored
+      	IF ErrorOccurred() THEN clError.Initialize(CManageError::HFSQLError, HErrorInfo())
+      ELSE
+      	// The records was not found
+      	clError.Initialize(CManageError::RecordNotFound)
+      END
+      
+      // Returns True if no error was detected
+      RESULT (clError.code = CManageError.None)
+     type : 458752
+   -
+     name : bNew
+     procedure_id : 1461290157794155177
+     type_code : 12
+     code : |1+
+      // Summary: Indicates whether the current element is a new element or not
+      // Syntax:
+      // [ <Result> = ] bNew ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	boolean: True if it is a new element, False otherwise
+      //
+      Procedure bNew() : boolean
+      
+      RESULT m_bNew
+     type : 458752
+   -
+     name : Copy
+     procedure_id : 1461351635949373039
+     type_code : 12
+     code : |1+
+      // Summary: Copies a model element into the current object
+      // Syntax:
+      // Copy (<pclBase> is MBase dynamic)
+      //
+      // Parameters:
+      //	pclOrder (MOrder dynamic): model object to copy
+      // Return value:
+      // 	None
+      //
+      Procedure Copy(pclBase is MBase dynamic)
+      
+      // Performs a copy of the initial element into the current object
+      object <= pclBase
+     type : 458752
+   -
+     name : FileToMemory
+     internal_properties : CAAAAAgAAABdatXcqqGhdA15vQdqjgz3bvhOPtOJgRWhg1PUaA2qyyswBtbmFUXIyYSqkTmHIeBkYFWY7lmDJkfZ5T3uf2CXO8rijDOZka4BXIHF1k8JdpNCjRjelyv1Fnezp8KPvxcTE6QskYMCtRugd/veQmb8OXFCzhMFv1UW77s9p5O/h+CQ6DQs+A8flvf0tRxYo3SXXh2zQwZTOrY5M2lcx10neYpl2xkNAddaM2hxG75qaDxhH646c4qSEN9OoqxKf+4FdX5NdSmki2gjWf3Hp/UqsWH3wQYXYUkUAZJCvSdiQEwYD7O09jzN
+     procedure_id : 1461366586761864059
+     type_code : 12
+     code : |1-
+      // Summary: Automatically initializes the value of members with the value of the record items
+      // Syntax:
+      // FileToMemory ([<sdSource> is string])
+      //
+      // Parameters:
+      //	sdSource (ANSI string): Source to use, empty string ("") to use the file associated with the model
+      // Return value:
+      // 	None
+      //
+      Procedure FileToMemory(dsSource is string = "")
+      
+      // If the source is not filled
+      IF dsSource = "" THEN
+      	// Loads the object from the file associated with the model
+      	WL.FileToMemory(object, m_sFileName)
+      ELSE
+      	// Loads the object from the source passed in parameter
+      	WL.FileToMemory(object, dsSource)
+      END
+     type : 458752
+   -
+     name : MemoryToFile
+     internal_properties : CAAAAAgAAABvGNs/t1Ofynv3N1UgHL5BrGZ8hNFjT5tnuV3qzsM0BfEmtIQsP1tGZzLkcDdFdUYKz7sEl4EZxpRl8pVs1fkhwHTglFUHJ+JNQOMDpK0t0BHw6XTsGUWZmpMtNZhdg8lVqTwcRw3UJfdUgdVIVAoeg3e20hgoyL7pMmAQMiAmRuvbje9ll7BYkWJpeL+xTqeKQepmGGmsf7UIHEAbHJyO6HH+UhIavO38BPfqgp7Y1bl+4BxKYyV97WzZZxj6z5KF9SoBQQ2cvxAbvUmb7yU+YVHr3XIjoTUseR7+cZ/SNKz4S5pmBE7f
+     procedure_id : 1461366629711546675
+     type_code : 12
+     code : |1-
+      // Summary: Automatically initializes the record items with the value of members
+      // Syntax:
+      // MemoryToFile ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	None
+      //
+      Procedure VIRTUAL MemoryToFile()
+      
+      WL.MemoryToFile(object, m_sFileName)
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+resources :
+ string_res :
+  identifier : 0x144782b2010f5814
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

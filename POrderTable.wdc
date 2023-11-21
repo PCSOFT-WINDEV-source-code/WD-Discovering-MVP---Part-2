@@ -1,0 +1,221 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : POrderTable
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd02020525ad9e
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAAAhruhehxWuLsD1M8DsDbcJi1so/wBtSX8NjqGmsQNLHA+wJBrnV3KWdVlbzvQD6lLtPnVOToayEZkpC1nyvl+MO25QbE8co/+lQhJZngk=
+  type_code : 10
+  p_codes :
+   -
+     code : |1-
+      POrderTable is Class
+      
+      PROTECTED
+      	m_pclOrders is MArrayOfOrders dynamic <associated>	// model associated with this presenter (always in phase with the interface)
+      	m_pclCurrentOrder is MOrder dynamic					// current order in the table (selected)
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352859056680350
+     type_code : 27
+     code : |1-
+      Procedure Constructor(pclArrOrder is MArrayOfOrders dynamic)
+      
+      // Stores the array of orders
+      m_pclOrders = pclArrOrder
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352859056745886
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+     type : 655360
+   -
+     name : NewRecord
+     procedure_id : 1494352859056811422
+     type_code : 12
+     code : |1-
+      // Summary: Defines an order to add
+      // Syntax:
+      // [ <Result> = ] New ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	POrderForm: Order to add
+      //
+      Procedure NewRecord() : POrderForm
+      
+      clOrders	is MOrder(m_pclCustomer)
+      clPForm	is POrderForm(clOrders, NotifIfAdd) // If the addition is effective, the NotifIfAdd procedure will be run
+      
+      RESULT clPForm
+     type : 458752
+   -
+     name : Modify
+     procedure_id : 1494352859056876958
+     type_code : 12
+     code : |1+
+      // Summary: Defines the order to modify
+      // Syntax:
+      // [ <Result> = ] Modify ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	POrderForm: Order to modify
+      //
+      Procedure Modify()
+      
+      clPForm	is POrderForm(m_pclCurrentOrder, NotifModif)	// If the modification is effective, the NotifModif procedure will be run
+      
+      RESULT clPForm
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1494352859056942494
+     type_code : 12
+     code : |1+
+      // Summary: Deletes an order
+      // Syntax:
+      //[<Result> = ] bDelete (<clError> is CManageError)
+      //
+      // Parameters:
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the order is deleted, False otherwise
+      //
+      Procedure bDelete(clError is CManageError) : boolean
+      
+      RESULT m_pclOrders.bdelete(CurrentOrder, clError)
+     type : 458752
+   -
+     name : NotifIfAdd
+     procedure_id : 1494352859057008030
+     type_code : 12
+     code : |1-
+      // Summary: Procedure called if the addition of an order is effective
+      // Syntax:
+      //NotifIfAdd (<pclOrder> is MOrder dynamic)
+      //
+      // Parameters:
+      //	pclOrder (MOrder dynamic): Order that was just added
+      
+      Procedure NotifIfAdd(pclOrder is MOrder dynamic)
+      
+      // Adds the order to the array
+      m_pclOrders.AddElement(pclOrder)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+   -
+     name : NotifModif
+     procedure_id : 1494352859057073566
+     type_code : 12
+     code : |1-
+      // Summary: Procedure called if the modification of a customer is effective
+      // Syntax:
+      // NotifModif (<pclCustomer> is MCustomer dynamic)
+      //
+      // Parameters:
+      //	pclOrder (mOrder dynamic): Order that was just modified
+      // Return value:
+      // 	None
+      //
+      Procedure NotifModif(pclOrder is MOrder dynamic <useful>)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+   -
+     name : InternalNumberCurrentOrder
+     procedure_id : 1494352859057139102
+     type_code : 12
+     code : |1+
+      // Summary: Returns the internal number of the current order
+      // Syntax:
+      //[ <Result> = ] InternalNumberCurrentOrder ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	8-byte integer: Internal number of the current order
+      //
+      Procedure InternalNumberCurrentOrder() : 8-byte int
+      
+      RESULT m_pclCurrentOrder.m_nInternalOrderNumber
+     type : 458752
+  properties :
+   -
+     name : CurrentOrder
+     identifier : 0x14bd02020526ad9e
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         Procedure PUBLIC CurrentOrder()
+         
+         // Returns the current order
+         RESULT m_pclCurrentOrder
+        type : 1966080
+      -
+        code : |1-
+         Procedure PUBLIC CurrentOrder(Value is MOrder dynamic)
+         
+         // Stores the current order
+         m_pclCurrentOrder = Value
+        type : 2031616
+     template_refs : []
+   -
+     name : p_nTotalOrder
+     identifier : 0x14bd02020527ad9e
+     type_code : 103
+     p_codes :
+      -
+        code : |1+
+         Procedure PUBLIC p_nTotalOrder()
+         
+         // Returns the number of orders found in the array
+         RESULT m_arrOrders..Count
+        type : 1966080
+     template_refs : []
+   -
+     name : Title
+     identifier : 0x14bd02020528ad9e
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         Procedure Title()
+         
+         // Defines the presenter title
+         RESULT "Orders of " + m_pclOrders.m_pclCustomer.NameInLetters
+        type : 1966080
+      -
+        code : |1-
+         
+        type : 2031616
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : PTableCommande
+resources :
+ string_res :
+  identifier : 0x143e266702324115
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

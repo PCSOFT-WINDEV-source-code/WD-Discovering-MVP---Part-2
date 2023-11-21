@@ -1,0 +1,126 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : PCustomerForm
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd01fb04d58fb3
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      PCustomerForm is Class
+      	
+      PROTECTED
+      	
+      	m_clCurrentCustomer is MCustomer <associated>	// model associated with this presenter (always in phase with the interface)
+      	m_pclSourceCustomer is MCustomer dynamic	// source model (before modification) associated with this presenter
+      	
+      	m_pValidation is Procedure	// Procedure to run when validating a record
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352828986462131
+     type_code : 27
+     code : |1-
+      Procedure Constructor(pclCustomer is MCustomer dynamic, pValidation is Procedure = Null)
+      
+      // Stores the initial customer
+      m_pclSourceCustomer <- pclCustomer
+      // Defines the current customer
+      m_clCurrentCustomer <= m_pclSourceCustomer
+      // Stores the validation procedure
+      m_pValidation = pValidation
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352828986527667
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : ValidateModification
+     internal_properties : CAAAAAgAAACBc0TPwxQhFtHq56gET75/meterDa319Mx2PPe6GUp4RsOQOC92r3h8olf1nRKU/wp3CgUJmod4TnIM+RZZxNvRi5fgvL/H3FDXY0bZyE1vSwW7zZrslFgk1Nge5jwUPsKFgqQT8Gk5OrMfSY=
+     procedure_id : 1494352828986593203
+     type_code : 12
+     code : |1-
+      // Summary: Validates the modifications of customer form
+      // Syntax:
+      //[ <Result> = ] ValidateModification ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	boolean: True if the modification is effective, False otherwise
+      //
+      Procedure ValidateModification()
+      
+      clError is CManageError
+      clStores	is MCustomer
+      
+      // Stores the source customer
+      clStores <= m_pclSourceCustomer
+      
+      // Defines the source customer
+      m_pclSourceCustomer <= m_clCurrentCustomer
+      
+      // Saves the customer
+      IF m_pclSourceCustomer.bSave(clError) = False THEN
+      	ErrorThrow(1, clError.FormatMessage())
+      	// Repositions the source
+      	m_pclSourceCustomer <= clStores
+      	RESULT False
+      END
+      
+      // Runs the validation procedure if it is defined
+      IF m_pValidation <> Null THEN m_pValidation(m_pclSourceCustomer)
+      
+      RESULT True
+     type : 458752
+   -
+     name : ListOrders
+     procedure_id : 1494352828986658739
+     type_code : 12
+     code : |1-
+      // Summary: Returns the list of customer orders
+      // Syntax:
+      //[ <Result> = ] ListOrders ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	POrderTable: Array of customer orders
+      //
+      Procedure ListOrders() : POrderTable
+      
+      // Loads the customer orders
+      clArrOrders is MArrayOfOrders(m_clCurrentCustomer)
+      clArrOrders.Load()
+      
+      clOrderPresenter is POrderTable(clArrOrders)
+      
+      RESULT clOrderPresenter
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : PFicheClient
+resources :
+ string_res :
+  identifier : 0x14326d4a001d0447
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

@@ -1,0 +1,141 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : PFindProduct
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd02050536b710
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAAAhruhehxWuLsD1M8DsDbcJi1so/wBtSX8NjqGmsQNLHA+wJBrnV3KWdVlbzvQD6lLtPnVOToayEZkpC1nyvl+MO25QbE8co/+lQhJZngk=
+  type_code : 10
+  p_codes :
+   -
+     code : |1-
+      PFindProduct is Class
+      
+      PROTECTED
+      	m_clDisplayedProducts	is MArrayOfProducts <associated>	// model associated with this presenter (always in phase with the interface)
+          m_pclSourceProducts		is MArrayOfProducts dynamic	// List of products
+      	m_pclCurrentProduct		is MProduct dynamic			// current product in the table (selected)
+      	
+      	m_sFilter				is string		// String for filter
+      	
+      	m_pValidation			is Procedure	// Validation procedure
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352871942698768
+     type_code : 27
+     code : |1-
+      Procedure Constructor(pclTabProduct is MArrayOfProducts dynamic, pValidation is Procedure=Null)
+      
+      // Stores the array of products
+      m_pclSourceProducts = pclTabProduct
+      // Stores the validation procedure
+      m_pValidation = pValidation
+      // Reset the default filter
+      Filter = ""
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352871942764304
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+     type : 655360
+   -
+     name : Validation
+     procedure_id : 1494352871942829840
+     type_code : 12
+     code : |1-
+      Procedure Validation()
+      
+      // Runs the validation procedure if it is defined
+      IF m_pValidation<>Null THEN
+      	m_pValidation(m_pclCurrentProduct)
+      END
+     type : 458752
+  properties :
+   -
+     name : CurrentProduct
+     identifier : 0x14bd02050537b710
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         Procedure PUBLIC CurrentProduct() : MProduct
+         
+         // Returns the current product
+         RESULT m_pclCurrentProduct
+        type : 1966080
+      -
+        code : |1-
+         Procedure PUBLIC CurrentProduct(Value is MProduct dynamic)
+         
+         // Stores the current product
+         m_pclCurrentProduct = Value
+        type : 2031616
+     template_refs : []
+   -
+     name : TotalProducts
+     identifier : 0x14bd02050538b710
+     type_code : 103
+     p_codes :
+      -
+        code : |1+
+         Procedure PUBLIC TotalProducts()
+         
+         // Returns the number of products found in the array
+         RESULT m_arrProducts..Count
+        type : 1966080
+     template_refs : []
+   -
+     name : Filter
+     identifier : 0x14bd02050539b710
+     type_code : 103
+     p_codes :
+      -
+        internal_properties : CAAAAAgAAADhgjl4zg+airnR5GpUYoxRLPWd1tbN5no5R57r8SU54dIEzTjiWFlai4q120P/WH4h2Dxu2hb1Hxe50ljX9Eu4qhfyrWPElsx8ZtlXheCNKJYU7UEVefWofjIbU9iio2kFiYmisyBNR4uDQn5UW5N4RhkRQPV1WWbND9K5jgmOoQdgTb8CughUII9GhMPXzUBXddX4WEItuo5bNblzoJxyng11w5GY6N3bWS7+KpPUrRr6MoceTyN9bDI1fto=
+        code : |1-
+         Procedure PUBLIC Filter() : string
+         
+         // Returns the current filter string
+         RESULT m_sFilter
+        type : 1966080
+      -
+        internal_properties : CAAAAAgAAADhgjl4zg+airnR5GpUYoxRLPWd1tbN5no5R57r8SU54dIEzTjiWFlai4q120P/WH4h2Dxu2hb1Hxe50ljX9Eu4qhfyrWPElsx8ZtlXheCNKJYU7UEVefWofjIbU9iio2kFiYmisyBNR4uDQn5UW5N4RhkRQPV1WWbND9K5jgmOoQdgTb8CughUII9GhMPXzUBXddX4WEItuo5bNblzoJxyng11w5GY6N3bWS7+KpPUrRr6MoceTyN9bDI1fto=
+        code : |1+
+         Procedure PUBLIC Filter(Value is string)
+         
+         // Stores the filter string
+         m_sFilter =Value
+         
+         // Copies the list of products into the list of displayed products
+         m_clDisplayedProducts <= m_pclSourceProducts
+         // Applies the filter
+         m_clDisplayedProducts.Filter(m_sFilter)
+         
+         // Asks to update the views
+         RequestRefreshUI()
+         
+        type : 2031616
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : PRechercheProduit
+resources :
+ string_res :
+  identifier : 0x143f7b3500b90434
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

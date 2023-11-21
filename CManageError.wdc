@@ -1,0 +1,134 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : CManageError
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd020c0561d47f
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACNChQC+wmyUlRZZ1wQkWtdP8/8e5zJJUspWg0Kbe8H2Et8YE4r34iuKY0PEjDHrpZRmtnqomqefTW1hyWGCou4x/LswPuoNxOJZjZ9+q0=
+  type_code : 10
+  p_codes :
+   -
+     code : |1-
+      // Type of error
+      ErrorCode is enumeration
+      	None		// No error
+      	RecordNotFound	// Error such as "record not found"
+      	HFSQLError	// HFSQL error
+      END
+      
+      CManageError is Class
+      	
+      PROTECTED
+      	m_eCode		is ErrorCode	// Error Code
+      	m_sText 	is string		// Text describing the error
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352902010164351
+     type_code : 27
+     code : |1-
+      Procedure Constructor()
+      
+      // No error by default
+      m_eCode = None
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352902010229887
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+     type : 655360
+   -
+     name : Initialize
+     procedure_id : 1494352902010295423
+     type_code : 12
+     code : |1-
+      // Summary: Initializes an error
+      // Syntax:
+      //Initialize (<eErrorCode> is enumeration [, <sText> is string])
+      //
+      // Parameters:
+      //	eErrorCode (enumeration): Code of the error
+      //	sText (ANSI string - default value=""): Description of the error if necessary
+      // Return value:
+      // 	None
+      //
+      Procedure Initialize(eErrorCode is ErrorCode, sText is string = "")
+      
+      // Stores the error code and text
+      m_eCode = eErrorCode
+      m_sText = sText
+      
+      // If the error is a HFSQL error and if no description was given
+      IF eErrorCode = HFSQLError _AND_ sText = "" THEN
+      	// Automatically retrieves the details of the HFSQL error
+      	m_sText = HErrorInfo()
+      END
+     type : 458752
+   -
+     name : FormatMessage
+     procedure_id : 1494352902010360959
+     type_code : 12
+     code : |1+
+      // Summary: Formats the error message
+      // Syntax:
+      //[ <Result> = ] FormatMessage ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	ANSI string: Text of the error in clear
+      //
+      Procedure FormatMessage() : string
+      
+      // Returns an empty string if no error
+      IF m_eCode = None THEN RESULT ""
+      
+      // If a description text is specified, returns this text
+      IF m_sText <> "" THEN RESULT m_sText
+      
+      // Returns a message according to the error code
+      SWITCH m_eCode
+      	// Record not found
+      	CASE RecordNotFound:		RESULT "Record not found in the database."
+      	// HFSQL error
+      	CASE HFSQLError:	RESULT "Database error."
+      	// Other cases
+      	OTHER CASE:			RESULT "<unknown error>"
+      END
+     type : 458752
+  properties :
+   -
+     name : Code
+     identifier : 0x14bd020c0562d47f
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         Procedure PUBLIC Code()
+         
+         RESULT m_eCode
+        type : 1966080
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : CGestionErreur
+resources :
+ string_res :
+  identifier : 0x143405b9005f7737
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

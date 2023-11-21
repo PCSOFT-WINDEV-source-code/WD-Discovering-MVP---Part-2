@@ -1,0 +1,168 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MArrayOfOrders
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd02020515ab5d
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      MArrayOfOrders is Class
+      
+      PUBLIC
+      	m_pclCustomer 	is MCustomer dynamic	<weak>	// Customer of orders
+      	m_arrOrders is array of MOrder dynamic	// Array of orders
+      
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352859055434589
+     type_code : 27
+     code : |1-
+      Procedure Constructor(pclCustomer is MCustomer dynamic)
+      
+      // Stores the client
+      m_pclCustomer = pclCustomer
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352859055500125
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : Load
+     procedure_id : 1494352859055565661
+     type_code : 12
+     code : |1+
+      // Summary: Loads the array of orders
+      // Syntax:
+      // Load ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	None
+      //
+      Procedure Load()
+      
+      // Clear the table
+      DeleteAll(m_arrOrders)
+      
+      // Configures the query
+      QRY_CustomerOrders.pCustomerID = m_pclCustomer.m_vid
+      
+      // Runs the query
+      IF HExecuteQuery(QRY_CustomerOrders) THEN
+      	
+      	// Browses the list of orders	
+      	FOR EACH QRY_CustomerOrders
+      		
+      		// Loads the order in a model
+      		clOrders is MOrder(m_pclCustomer)
+      		clOrders.Load(QRY_CustomerOrders..Name)
+      		
+      		// Adds the order to the array
+      		ArrayAdd(m_arrOrders,clOrders)
+      		
+      	END
+      	
+      END
+     type : 458752
+   -
+     name : AddElement
+     procedure_id : 1494352859055631197
+     type_code : 12
+     code : |1+
+      // Summary: Adds an order to the array
+      // Syntax:
+      //AddElement (<pclOrder> is MOrder dynamic)
+      //
+      // Parameters:
+      //	pclOrder (MOrder dynamic): Order to add
+      
+      
+      Procedure AddElement(pclOrder is MOrder dynamic)
+      
+      // Adds the order to the array
+      Add(m_arrOrders, pclOrder)
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1494352859055696733
+     type_code : 12
+     code : |1-
+      // Summary: Deletes an order
+      // Syntax:
+      // [ <Result> = ] bDelete (<pclOrder> is MOrder dynamic, <clError> is CManageError)
+      //
+      // Parameters:
+      //	pclOrder (MOrder dynamic): Order to delete from the array
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	Undefined type: True if the deletion is effective, False otherwise
+      //
+      Procedure bDelete(pclOrder is MOrder dynamic, clError is CManageError)
+      
+      // Finds the order in the array
+      nPosition is int = Seek(m_arrOrders, asLinear, pclOrder)
+      IF nPosition=-1 THEN
+      	// Order not found
+      	clError.Initialize(CManageError.RecordNotFound)
+      	RESULT False
+      END
+      
+      // Deletes the order
+      let bDeletedOrder = pclOrder.bDelete(clError)
+      
+      // Deletes the order from the array
+      IF bDeletedOrder THEN ArrayDelete(m_arrOrders, nPosition)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+      
+      RESULT bDeletedOrder
+     type : 458752
+   -
+     name : Modify
+     procedure_id : 1494352859055762269
+     type_code : 12
+     code : |1-
+      // Summary: Modifies an order
+      // Syntax:
+      //Modify (<pclOrder> is MOrder dynamic)
+      //
+      // Parameters:
+      //	pclOrder (MOrder dynamic): Modified order
+      // Return value:
+      // 	None
+      //
+      Procedure Modify(pclOrder is MOrder dynamic <useful>)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : MTableauDeCommandes
+resources :
+ string_res :
+  identifier : 0x143e2b4c00b95fac
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

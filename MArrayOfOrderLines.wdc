@@ -1,0 +1,293 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MArrayOfOrderLines
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd020e0592dd55
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      MArrayOfOrderLines is Class
+      
+      PUBLIC
+      	// Order lines belong to an order
+      	m_pclOrder			is MOrder dynamic	<weak>
+      
+      	// List of order lines
+      	m_arrOrderLines		is array of MOrderLine dynamic
+      	// List of deleted lines
+      	m_arrDeletedLines	is array of MOrderLine dynamic
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352910603246933
+     type_code : 27
+     code : |1-
+      Procedure Constructor(pclOrder is MOrder dynamic)
+      
+      // Stores the order
+      m_pclOrder = pclOrder
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352910603312469
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : AddElement
+     procedure_id : 1494352910603378005
+     type_code : 12
+     code : |1+
+      // Summary: Adds an order line
+      // Syntax:
+      //AddElement (<pclCommandLine> is MOrderLine dynamic)
+      //
+      // Parameters:
+      //	pclCommandLine (MOrderLine dynamic): Order line to add
+      
+      
+      Procedure AddElement(pclCommandLine is MOrderLine dynamic)
+      
+      // Adds the order line to the array
+      Add(m_arrOrderLines, pclCommandLine)
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1494352910603443541
+     type_code : 12
+     code : |1-
+      // Summary: Deletes an order line from the array
+      // Syntax:
+      //[ <Result> = ] bDelete (<pclOrderLine> is MOrderLine dynamic, <clError> is CManageError)
+      //
+      // Parameters:
+      //	pclOrderLine (MOrderLine dynamic): Order line to delete
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the deletion is effective, False otherwise
+      //
+      Procedure bDelete(pclCommandLine is MOrderLine dynamic, clError is CManageError) : boolean
+      
+      // Finds the order line in the array
+      nPosition is int = Seek(m_arrOrderLines, asLinear, pclCommandLine)
+      IF nPosition = -1 THEN
+      	// The order line does not exist
+      	clError.Initialize(CManageError.RecordNotFound)
+      	RESULT False
+      END
+      
+      // Adds the order line to the list of deleted order lines
+      Add(m_arrDeletedLines, pclCommandLine)
+      // Deletes the order line from the current list
+      ArrayDelete(m_arrOrderLines, nPosition)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+      
+      // The deletion is effective
+      RESULT True
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1494352910603443541
+     type_code : 12
+     code : |1+
+      // Deletes all the order lines
+      Procedure bDelete(clError is CManageError)
+      
+      // Browses the order lines
+      FOR EACH clLine of m_arrOrderLines
+      	// Deletes the order line
+      	IF NOT clLine.bDelete(clError) THEN RESULT False
+      END
+      // Clears the array of order lines
+      DeleteAll(m_arrOrderLines)
+      
+      // Browses the deleted order lines
+      FOR EACH clLine of m_arrDeletedLines
+      	// Deletes the order line
+      	IF NOT clLine.bDelete(clError) THEN RESULT False
+      END
+      // Clears the array of deleted order lines
+      DeleteAll(m_arrDeletedLines)
+      
+      // The deletion is effective
+      RESULT True
+     type : 458753
+   -
+     name : Modify
+     procedure_id : 1494352910603509077
+     type_code : 12
+     code : |1-
+      // Summary: Modifies an order line
+      // Syntax:
+      // Modify (<pclOrderLine> is MOrderLine dynamic)
+      //
+      // Parameters:
+      //	pclOrderLine (MOrderLine dynamic): Order line to modify
+      // Return value:
+      // 	None
+      //
+      Procedure Modify(pclCommandLine is MOrderLine dynamic <useful>)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+   -
+     name : Copy
+     procedure_id : 1494352910603574613
+     type_code : 12
+     code : |1+
+      // Summary: Copies an array of orders into the current array
+      // Syntax:
+      // Copy (<pclBase> is MBase dynamic)
+      //
+      // Parameters:
+      //	pclSourceArray (MArrayOfOrderLines dynamic): Array of order lines to copy
+      // Return value:
+      // 	None
+      //
+      Procedure Copy(pclSourceArray is MArrayOfOrderLines dynamic)
+      
+      // Deletes the array of current order lines
+      DeleteAll(m_arrOrderLines)
+      
+      // Browses the order lines of the object to copy
+      FOR EACH clOrdLine of pclSourceArray.m_arrOrderLines
+      	// Copies the order line
+      	clLine is MOrderLine()
+      	clLine <= clordline
+      	clLine.m_pclOrder = m_pclOrder
+      	// Adds the order line
+      	Add(m_arrOrderLines, clLine)
+      END
+      
+      // Browses the deleted order lines of the object to copy
+      FOR EACH clmdLine of pclSourceArray.m_arrDeletedLines
+      	// Copies the order line
+      	clLine is MOrderLine()
+      	clLine <= clmdLine
+      	clLine.m_pclOrder = m_pclOrder
+      	// Adds the order line
+      	Add(m_arrDeletedLines, clLine)
+      END
+     type : 458752
+   -
+     name : Load
+     procedure_id : 1494352910603640149
+     type_code : 12
+     code : |1+
+      // Summary: Loads the order lines
+      // Syntax:
+      // Load ([<sdSource> is string])
+      //
+      // Parameters:
+      // 	None
+      // Return value:
+      // 	None
+      //
+      Procedure Load()
+      
+      // Clears the array of order lines
+      DeleteAll(m_arrOrderLines)
+      
+      // Browses the records of the order line for the order
+      FOR EACH OrderLine WHERE OrderID = m_pclOrder.m_vID
+      	// Loads the order line
+      	clLine is MOrderLine(m_pclOrder)
+      	clLine.Load()
+      	// Adds the order line to the array
+      	Add(m_arrOrderLines, clLine)
+      END
+     type : 458752
+   -
+     name : NewLine
+     procedure_id : 1494352910603705685
+     type_code : 12
+     code : |1+
+      // Summary: Adds a new order line
+      // Syntax:
+      // NewLine (<pclProduct> is MProduct dynamic)
+      //
+      // Parameters:
+      //	pclProduct (MProduct dynamic): Product object defining the order line
+      // Return value:
+      // 	None
+      //
+      Procedure NewLine(pclProduct is MProduct dynamic)
+      
+      // New order line
+      clLine is MOrderLine(m_pclOrder)
+      
+      // Stores the product information
+      clLine.m_sReference = pclProduct.m_sReference
+      clLine.m_sCaption = pclProduct.m_sCaption
+      clLine.m_cyPrice = pclProduct.m_cyprice
+      clLine.m_nquantity = 1
+      clLine.m_cyTotal = clLine.m_cyPrice * clLine.m_nQuantity
+      
+      // Adds the order line to the array
+      Add(m_arrOrderLines, clLine)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+   -
+     name : bSave
+     procedure_id : 1494352910603771221
+     type_code : 12
+     code : |1-
+      // Summary: Saves the record in database
+      // Syntax:
+      // [<Result> = ] bSave (<clError> is CManageError)
+      //
+      // Parameters:
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the backup is effective, False otherwise
+      //
+      Procedure bSave(clError is CManageError) : boolean
+      
+      // Browses the order lines of the array
+      FOR EACH clLine of m_arrOrderLines
+      	// Saves the order line
+      	IF NOT clline.bSave(clError) THEN RESULT False
+      END
+      
+      // Browses the deleted order lines
+      FOR EACH clLine of m_arrDeletedLines
+      	// Deletes the order line
+      	IF NOT clLine.bDelete(clError) THEN RESULT False
+      END
+      // Clears the array of deleted lines
+      DeleteAll(m_arrDeletedLines)
+      
+      // Effective backup
+      RESULT True
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : MTableauDeLigneCommande
+resources :
+ string_res :
+  identifier : 0x143e68f405aa3a4e
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

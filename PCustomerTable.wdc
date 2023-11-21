@@ -1,0 +1,194 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : PCustomerTable
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd01fd04e39751
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAAAhruhehxWuLsD1M8DsDbcJi1so/wBtSX8NjqGmsQNLHA+wJBrnV3KWdVlbzvQD6lLtPnVOToayEZkpC1nyvl+MO25QbE8co/+lQhJZngk=
+  type_code : 10
+  p_codes :
+   -
+     code : |1-
+      PCustomerTable is Class
+      
+      PROTECTED
+      	m_pclCustomers 		is MArrayOfCustomers dynamic <associated>	// model associated with this presenter (always in phase with the interface)
+      	m_pclCurrentCustomer 	is MCustomer dynamic						// current customer in the table (selected)
+      	
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352837577512785
+     type_code : 27
+     code : |1-
+      Procedure Constructor(clArrCustomer is MArrayOfCustomers dynamic)
+      
+      // Stores the array of customers
+      m_pclCustomers = clArrCustomer
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352837577578321
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+     type : 655360
+   -
+     name : NewRecord
+     procedure_id : 1494352837577643857
+     type_code : 12
+     code : |1-
+      // Summary: Defines a customer to add
+      // Syntax:
+      // [ <Result> = ] New ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	PCustomerForm: Customer to add
+      //
+      Procedure NewRecord() : PCustomerForm
+      
+      clCustomer	is MCustomer()
+      clPForm	is PCustomerForm(clCustomer, NotifIfAdd)	// If the addition is effective, the NotifIfAdd procedure will be run
+      
+      RESULT clPForm
+     type : 458752
+   -
+     name : Modify
+     procedure_id : 1494352837577709393
+     type_code : 12
+     code : |1-
+      // Summary: Defines the customer to modify
+      // Syntax:
+      // [ <Result> = ] Modify ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	PCustomerForm: Customer to modify
+      //
+      Procedure Modify() : PCustomerForm
+      
+      clPForm	is PCustomerForm(CurrentCustomer, NotifIfModif)	// If the modification is effective, the NotifIfModif procedure will be run
+      
+      RESULT clPForm
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1494352837577774929
+     type_code : 12
+     code : |1+
+      // Summary: Deletes a customer
+      // Syntax:
+      // [ <Result> = ] bDelete (<clError> is CManageError)
+      //
+      // Parameters:
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the customer is deleted, False otherwise
+      //
+      Procedure bDelete(clError is CManageError) : boolean
+      
+      RESULT m_pclCustomers.bdelete(CurrentCustomer, clError)
+     type : 458752
+   -
+     name : NotifIfAdd
+     procedure_id : 1494352837577840465
+     type_code : 12
+     code : |1+
+      // Summary: Procedure called if the addition of a customer is effective
+      // Syntax:
+      //NotifIfAdd (<pclCustomer> is MCustomer dynamic)
+      //
+      // Parameters:
+      //	pclCustomer (MCustomer dynamic): Customer that was added
+      
+      Procedure NotifIfAdd(pclCustomer is MCustomer dynamic)
+      
+      // Adds the customer to the array
+      m_pclCustomers.AddElement(pclCustomer)
+     type : 458752
+   -
+     name : NotifIfModif
+     procedure_id : 1494352837577906001
+     type_code : 12
+     code : |1-
+      // Summary: Procedure called if the modification of a customer is effective
+      // Syntax:
+      //NotifIfModif (<pclCustomer> is MCustomer dynamic)
+      //
+      // Parameters:
+      //	pclCustomer (MCustomer dynamic): Customer that was modified
+      
+      Procedure NotifIfModif(pclCustomer is MCustomer dynamic <useful>)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+  properties :
+   -
+     name : CurrentCustomer
+     identifier : 0x14bd01fd04e49751
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         Procedure PUBLIC CurrentCustomer() : MCustomer
+         
+         // Returns the current customer
+         RESULT m_pclCurrentCustomer
+        type : 1966080
+      -
+        code : |1-
+         Procedure PUBLIC CurrentCustomer(Value is MCustomer dynamic)
+         
+         // Defines the current customer
+         m_pclCurrentCustomer = Value
+        type : 2031616
+     template_refs : []
+   -
+     name : TotalCustomer
+     identifier : 0x14bd01fd04e59751
+     type_code : 103
+     p_codes :
+      -
+        code : |1+
+         Procedure PUBLIC TotalCustomer() : int
+         
+         // Returns the number of customers in the table
+         RESULT m_arrCustomers..Count
+        type : 1966080
+     template_refs : []
+   -
+     name : CurrentLastNampeFirstName
+     identifier : 0x14bd01fd04e69751
+     type_code : 103
+     p_codes :
+      -
+        code : |1-
+         Procedure PUBLIC CurrentLastNampeFirstName() : string
+         
+         RESULT CurrentCustomer.m_sLastName +[" "]+ CurrentCustomer.m_sfirstname
+        type : 1966080
+     template_refs : []
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : PTableClient
+resources :
+ string_res :
+  identifier : 0x14329d8b000c7fed
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

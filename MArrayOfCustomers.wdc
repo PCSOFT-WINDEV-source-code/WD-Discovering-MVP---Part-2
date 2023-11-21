@@ -1,0 +1,165 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MArrayOfCustomers
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd01fd04f59973
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      MArrayOfCustomers is Class
+      
+      PUBLIC
+      	m_arrCustomers is array of MCustomer dynamic	// Array of customers
+      
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352837578496386
+     type_code : 27
+     code : |1+
+      Procedure Constructor()
+      
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352837578561922
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : Load
+     procedure_id : 1494352837578627458
+     type_code : 12
+     code : |1+
+      // Summary: Loads the array of customers
+      // Syntax:
+      // Load ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	None
+      //
+      Procedure Load()
+      
+      // Clear the table
+      DeleteAll(m_arrCustomers)
+      
+      // Runs the query
+      IF HExecuteQuery(QRY_Customers) THEN
+      
+      	// Summary: Browses the list of customers	
+      	FOR EACH QRY_Customers
+      		
+      		// Loads the customer in a model
+      		clCustomer is MCustomer
+      		clCustomer.Load(QRY_Customers..Name)
+      		
+      		// Adds the customer to the array
+      		ArrayAdd(m_arrCustomers, clCustomer)
+      		
+      	END
+      	
+      END
+     type : 458752
+   -
+     name : AddElement
+     procedure_id : 1494352837578692994
+     type_code : 12
+     code : |1+
+      // Summary: Adds a customer to the array
+      // Syntax:
+      //AddElement (<clCustomer> is MCustomer dynamic)
+      //
+      // Parameters:
+      //	clCustomer (MCustomer dynamic): Customer to add
+      
+      
+      Procedure AddElement(clCustomer is MCustomer dynamic)
+      
+      // Adds the customer
+      Add(m_arrCustomers, clCustomer)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+   -
+     name : bDelete
+     procedure_id : 1494352837578758530
+     type_code : 12
+     code : |1-
+      // Summary: Deletes a customer
+      // Syntax:
+      // [ <Result> = ] bDelete (<clCustomer> is MCustomer dynamic, <clError> is CManageError)
+      //
+      // Parameters:
+      //	clCustomer (MCustomer dynamic): Customer to delete from the array
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the deletion is effective, False otherwise
+      //
+      Procedure bDelete(clCustomer is MCustomer dynamic, clError is CManageError) : boolean
+      
+      // Finds the customer in the array
+      nPosition is int = Seek(m_arrCustomers, asLinear, clCustomer)
+      IF nPosition = -1 THEN
+      	// Customer not found
+      	clError.Initialize(CManageError.RecordNotFound)
+      	RESULT False
+      END
+      
+      // Deletes the customer
+      let bCustomerDelete = clCustomer.bDelete(clError)
+      
+      // Deletes the customer from the array
+      IF bCustomerDelete THEN arrayDelete(m_arrCustomers, nPosition)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+      
+      RESULT bCustomerDelete
+     type : 458752
+   -
+     name : Modify
+     procedure_id : 1494352837578824066
+     type_code : 12
+     code : |1-
+      // Summary: Modifies a customer
+      // Syntax:
+      //Modify (<pclCustomer> is MCustomer dynamic)
+      //
+      // Parameters:
+      //	pclCustomer (MCustomer dynamic): Modified customer
+      // Return value:
+      // 	None
+      //
+      Procedure Modify(pclCustomer is MCustomer dynamic <useful>)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : MTableauDeClients
+resources :
+ string_res :
+  identifier : 0x1433a337001aab47
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

@@ -1,0 +1,194 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : MArrayOfProducts
+ major_version : 28
+ minor_version : 0
+ type : 4
+ description : ""
+ subtype : 0
+class :
+ identifier : 0x14bd02050545b913
+ internal_properties : CAAAAAgAAAB2/vstTMCJbS/hlxjFxirSqKvCUuv8YxgpWyl7S3iA
+ code_elements :
+  internal_properties : CAAAAAgAAACvL/xJSPEYL0F7XjfvIEkq7KZEil71AOKRbKBbcV3v5V7zJbShlCEU4DqiUG94tEWUlFs+p50ghK+fuCOZGQzGHUqnmtnPBy3H
+  type_code : 10
+  p_codes :
+   -
+     code : |1+
+      MArrayOfProducts is Class
+      
+      PUBLIC
+      	m_arrProducts is array of MProduct dynamic	// Array of products
+      
+      END
+     type : 131072
+  procedures :
+   -
+     name : Manufacturer
+     procedure_id : 1494352871943485715
+     type_code : 27
+     code : |1+
+      Procedure Constructor()
+      
+     type : 589824
+   -
+     name : Destructor_
+     procedure_id : 1494352871943551251
+     type_code : 28
+     code : |1+
+      Procedure Destructor()
+      
+     type : 655360
+   -
+     name : Load
+     procedure_id : 1494352871943616787
+     type_code : 12
+     code : |1+
+      // Summary: Loads the array of products
+      // Syntax:
+      // Load ()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	None
+      //
+      Procedure Load()
+      
+      // Clear the table
+      DeleteAll(m_arrProducts)
+      
+      // Runs the query
+      IF HExecuteQuery(QRY_Products) THEN
+      	
+      	// Browses the list of products	
+      	FOR EACH QRY_Products
+      		
+      		// Loads the product in a model
+      		clProduct is MProduct
+      		clProduct.Load(QRY_Products..Name)
+      		
+      		// Adds the product to the array
+      		ArrayAdd(m_arrProducts, clProduct)
+      		
+      	END
+      	
+      END
+     type : 458752
+   -
+     name : AddElement
+     procedure_id : 1494352871943682323
+     type_code : 12
+     code : |1+
+      // Summary: Adds a product to the array
+      // Syntax:
+      //AddElement (<pclProduct> is MProduct dynamic)
+      //
+      // Parameters:
+      //	pclProduct (MProduct dynamic): Product to add
+      
+      Procedure AddElement(pclProduct is MProduct dynamic)
+      
+      // Adds the product to the array
+      Add(m_arrProducts, pclProduct)
+     type : 458752
+   -
+     name : Remove
+     procedure_id : 1494352871943747859
+     type_code : 12
+     code : |1-
+      // Summary: Deletes a product
+      // Syntax:
+      //[ <Result> = ] Delete (<pclProduct> is MProduct dynamic, <clError> is CManageError)
+      //
+      // Parameters:
+      //	pclProduct (MProduct dynamic): Product to delete from the array
+      //	clError (CManageError): Object for managing the errors
+      // Return value:
+      // 	boolean: True if the deletion is effective, False otherwise
+      //
+      Procedure Remove(pclProduct is MProduct dynamic, clError is CManageError) : boolean
+      
+      // Finds the product in the array
+      nPosition is int = Seek(m_arrProducts, asLinear, pclProduct)
+      IF nPosition=-1 THEN
+      	// Product not found
+      	clError.Initialize(CManageError.RecordNotFound)
+      	RESULT False
+      END
+      
+      // Deletes the product
+      let bDeletedProduct = pclProduct.bDelete(clError)
+      
+      // Deletes the product from the array
+      IF bDeletedProduct THEN ArrayDelete(m_arrProducts, nPosition)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+      
+      RESULT bDeletedProduct
+     type : 458752
+   -
+     name : Modify
+     procedure_id : 1494352871943813395
+     type_code : 12
+     code : |1-
+      // Summary: Modifies a product
+      // Syntax:
+      //Modify (<pclProduct> is MProduct dynamic)
+      //
+      // Parameters:
+      //	pclProduct (MProduct dynamic): Product to modify
+      // Return value:
+      // 	None
+      //
+      Procedure Modify(pclProduct is MProduct dynamic <useful>)
+      
+      // Asks to update the views
+      RequestRefreshUI()
+     type : 458752
+   -
+     name : Filter
+     internal_properties : CAAAAAgAAAD5bfiMOxKuWYr/8yiysCsHw794xCDZeA5SyhKyKI0OOHqP3Xxo+Lg6N5DOlU/qdvHZz3+tkk+8Gs2349JdMDMtWoFuBMD57Ae7W6aucxisqDofywLLt+2PE3ZSND9X2qlebDxzrlsqJm9UlhgwyvbCkOhMCeLmCA04CHJGHb8ZrJTzLR8NXy7VMODr9t4IYUfHP3SsqJlKxCZGJ0MLqQBTzGXDZQLmKjsYtBgMUS/HFZnEwkrfW7ZkCAWkwdigH7k/X4LhBIhV6vIUnpvGcApagRXCkXCrG4ATz/evK8pf8qyo
+     procedure_id : 1494352871943878931
+     type_code : 12
+     code : |1+
+      // Summary: Filters the list of products
+      // Syntax:
+      //Filter (<sFilter> is string)
+      //
+      // Parameters:
+      //	sFilter (ANSI string): Filter
+      // Return value:
+      // 	None
+      //
+      Procedure Filter(sFilter is string)
+      
+      // No action if no filter is defined
+      IF sFilter = "" THEN RETURN
+      
+      pclProduct	is MProduct dynamic
+      
+      // Browses the array of products (from the end)
+      FOR EACH pclProduct, nSubscript of m_arrProducts FromEnd
+      	
+      	// If the product caption or reference does not contain the filter string
+      	IF Contains(pclProduct.m_sCaption, sFilter, IgnoreCase) = False _AND_ Contains(pclProduct.m_sReference, sFilter, IgnoreCase) = False THEN
+      		// Deletes the product
+      		ArrayDelete(m_arrProducts, nSubscript)
+      	END
+      	
+      END
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : MTableauDeProduits
+resources :
+ string_res :
+  identifier : 0x143f7b5900ed91ed
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ
